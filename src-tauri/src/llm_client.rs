@@ -141,10 +141,7 @@ fn build_headers(provider: &PostProcessProvider, api_key: &str) -> Result<Header
 
     // Common headers
     headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-    headers.insert(
-        USER_AGENT,
-        HeaderValue::from_static("VitzerTalk/1.0"),
-    );
+    headers.insert(USER_AGENT, HeaderValue::from_static("VitzerTalk/1.0"));
     headers.insert("X-Title", HeaderValue::from_static("Vitzer Talk"));
 
     // Provider-specific auth headers

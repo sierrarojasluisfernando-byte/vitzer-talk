@@ -383,6 +383,15 @@
         "remove": "Eliminar {{word}}",
         "duplicate": "\"{{word}}\" ya existe"
       },
+      "textReplacements": {
+        "title": "Reemplazos de texto",
+        "description": "Sustituye siempre una palabra o frase por otra en el texto dictado. Útil para nombres de marca que el modelo escribe mal. No distingue mayúsculas y solo coincide con palabras completas.",
+        "fromPlaceholder": "Cuando escriba…",
+        "toPlaceholder": "Reemplazar por…",
+        "add": "Agregar",
+        "remove": "Eliminar el reemplazo de {{from}}",
+        "duplicate": "Ya existe un reemplazo para \"{{from}}\""
+      },
       "voiceActivityDetection": {
         "title": "Detección de actividad de voz",
         "description": "Filtra el silencio de las grabaciones. Los modelos compatibles con streaming usan una cola de VAD más larga; desactivar el VAD graba audio sin procesar."

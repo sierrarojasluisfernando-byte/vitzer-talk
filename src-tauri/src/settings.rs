@@ -370,6 +370,14 @@ impl std::ops::DerefMut for SecretMap {
 /// guarantees every field — including ones added in the future — falls back to
 /// its `get_default_settings()` value when missing from a stored settings
 /// object, so a partial store can never fail the whole load (#1619).
+/// An exact, user-defined substitution applied to the final transcription
+/// (e.g. a brand name the model consistently mishears).
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Type)]
+pub struct TextReplacement {
+    pub from: String,
+    pub to: String,
+}
+
 /// Field-level defaults below take precedence where present.
 #[derive(Serialize, Deserialize, Debug, Clone, Type)]
 #[serde(default)]
@@ -439,6 +447,8 @@ pub struct AppSettings {
     pub log_level: LogLevel,
     #[serde(default)]
     pub custom_words: Vec<String>,
+    #[serde(default)]
+    pub text_replacements: Vec<TextReplacement>,
     #[serde(default)]
     pub model_unload_timeout: ModelUnloadTimeout,
     #[serde(default = "default_word_correction_threshold")]
@@ -955,6 +965,7 @@ pub fn get_default_settings() -> AppSettings {
         debug_mode: false,
         log_level: default_log_level(),
         custom_words: vec!["Vitzer".to_string()],
+        text_replacements: Vec::new(),
         model_unload_timeout: ModelUnloadTimeout::default(),
         word_correction_threshold: default_word_correction_threshold(),
         history_limit: default_history_limit(),

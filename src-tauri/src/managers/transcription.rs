@@ -1,6 +1,6 @@
 use crate::audio_toolkit::{
-    apply_custom_words, detect_output_language, normalize_transcription_output,
-    remove_filler_words, OutputLanguageEvidence,
+    apply_custom_words, apply_text_replacements, detect_output_language,
+    normalize_transcription_output, remove_filler_words, OutputLanguageEvidence,
 };
 use crate::chinese_script::{convert_chinese_script, ChineseVariety};
 use crate::engine_supervisor::{
@@ -1816,7 +1816,14 @@ fn post_process_transcription_text(
             settings.filler_word_removal_enabled,
         );
 
-        normalize_transcription_output(&without_fillers)
+        let replacements: Vec<(String, String)> = settings
+            .text_replacements
+            .iter()
+            .map(|r| (r.from.clone(), r.to.clone()))
+            .collect();
+        let replaced = apply_text_replacements(&without_fillers, &replacements);
+
+        normalize_transcription_output(&replaced)
     })
 }
 

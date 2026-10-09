@@ -464,6 +464,59 @@ pub fn remove_filler_words(
 ///
 /// Kept separate from [`remove_filler_words`] so disabling filler deletion
 /// does not also disable the existing repeated-word and whitespace cleanup.
+/// Applies exact, user-defined replacements to the transcription.
+///
+/// Matching ignores case and only fires on whole words (the match must not be
+/// glued to another letter or digit), so a rule for "bit" never rewrites
+/// "bitter". Longer `from` phrases win over shorter ones starting at the same
+/// position. Rules with an empty `from` are ignored.
+pub fn apply_text_replacements(text: &str, replacements: &[(String, String)]) -> String {
+    let mut rules: Vec<(Vec<char>, &str)> = replacements
+        .iter()
+        .filter_map(|(from, to)| {
+            let from = from.trim();
+            if from.is_empty() {
+                None
+            } else {
+                Some((from.chars().collect::<Vec<char>>(), to.as_str()))
+            }
+        })
+        .collect();
+    if rules.is_empty() {
+        return text.to_string();
+    }
+    rules.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+
+    let chars: Vec<char> = text.chars().collect();
+    let same = |a: char, b: char| a == b || a.to_lowercase().eq(b.to_lowercase());
+    let mut out = String::with_capacity(text.len());
+    let mut i = 0;
+    while i < chars.len() {
+        let at_word_start = i == 0 || !chars[i - 1].is_alphanumeric();
+        let mut replaced = false;
+        if at_word_start {
+            for (from, to) in &rules {
+                let end = i + from.len();
+                if end > chars.len() {
+                    continue;
+                }
+                let at_word_end = end == chars.len() || !chars[end].is_alphanumeric();
+                if at_word_end && from.iter().zip(&chars[i..end]).all(|(f, c)| same(*f, *c)) {
+                    out.push_str(to);
+                    i = end;
+                    replaced = true;
+                    break;
+                }
+            }
+        }
+        if !replaced {
+            out.push(chars[i]);
+            i += 1;
+        }
+    }
+    out
+}
+
 pub fn normalize_transcription_output(text: &str) -> String {
     let mut normalized = collapse_stutters(text);
 
@@ -491,6 +544,50 @@ mod tests {
         let language = OutputLanguageEvidence::UserSelected(language.to_string());
         let filtered = remove_filler_words(text, &language, custom_filler_words, true);
         normalize_transcription_output(&filtered)
+    }
+
+    fn rules(pairs: &[(&str, &str)]) -> Vec<(String, String)> {
+        pairs
+            .iter()
+            .map(|(a, b)| (a.to_string(), b.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn test_text_replacements_ignore_case_and_keep_punctuation() {
+        let r = rules(&[("bitser", "Vitzer")]);
+        assert_eq!(
+            apply_text_replacements("Hola Bitser, esto es BITSER.", &r),
+            "Hola Vitzer, esto es Vitzer."
+        );
+    }
+
+    #[test]
+    fn test_text_replacements_whole_words_only() {
+        let r = rules(&[("bit", "byte")]);
+        assert_eq!(
+            apply_text_replacements("un bit amargo, bitter", &r),
+            "un byte amargo, bitter"
+        );
+    }
+
+    #[test]
+    fn test_text_replacements_prefer_longer_phrase() {
+        let r = rules(&[
+            ("bitser", "Vitzer"),
+            ("bitser talk", "Vitzer Talk"),
+            ("bitsertalk", "Vitzer Talk"),
+        ]);
+        assert_eq!(
+            apply_text_replacements("uso bitser talk y BitserTalk con Bitser", &r),
+            "uso Vitzer Talk y Vitzer Talk con Vitzer"
+        );
+    }
+
+    #[test]
+    fn test_text_replacements_empty_rules_are_ignored() {
+        let r = rules(&[("  ", "x")]);
+        assert_eq!(apply_text_replacements("sin cambios", &r), "sin cambios");
     }
 
     #[test]
