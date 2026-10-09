@@ -211,9 +211,38 @@ pub fn rank_of(model_id: &str) -> u32 {
     RANK_BY_ID.get(model_id).copied().unwrap_or(u32::MAX)
 }
 
+/// The short list of models Vitzer Talk offers in its UI. The rest of the
+/// catalog stays bundled and runnable — it is only hidden from the model
+/// lists — so bringing a model back is a one-line change here.
+const FEATURED_REPOS: &[&str] = &[
+    "handy-computer/canary-180m-flash-gguf",
+    "handy-computer/parakeet-tdt-0.6b-v3-gguf",
+];
+
+/// Whether a model belongs to the curated set shown to users.
+pub fn is_featured(source: &ModelSource) -> bool {
+    matches!(source, ModelSource::HuggingFace { repo_id, .. } if FEATURED_REPOS.contains(&repo_id.as_str()))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn featured_repos_exist_in_catalog() {
+        for repo in FEATURED_REPOS {
+            assert!(
+                CATALOG.iter().any(|d| is_featured(&d.source)
+                    && matches!(&d.source, ModelSource::HuggingFace { repo_id, .. } if repo_id == repo)),
+                "featured repo {} is missing from the catalog",
+                repo
+            );
+        }
+        assert_eq!(
+            CATALOG.iter().filter(|d| is_featured(&d.source)).count(),
+            FEATURED_REPOS.len()
+        );
+    }
     use crate::managers::model_capabilities::KNOWN_ARCHES;
     use std::collections::BTreeSet;
 

@@ -1201,6 +1201,21 @@ impl ModelManager {
         list
     }
 
+    /// The models offered in the UI: the curated Vitzer Talk set
+    /// ([`crate::catalog::is_featured`]), each badged as recommended so the
+    /// onboarding screen features them all. Everything else stays in the
+    /// registry, hidden.
+    pub fn get_visible_models(&self) -> Vec<ModelInfo> {
+        self.get_available_models()
+            .into_iter()
+            .filter(|m| crate::catalog::is_featured(&m.source))
+            .map(|mut m| {
+                m.is_recommended = true;
+                m
+            })
+            .collect()
+    }
+
     /// Seed the bundled catalog ([`crate::catalog::CATALOG`]) into the registry,
     /// inserting each model whose id isn't already present (additive).
     ///

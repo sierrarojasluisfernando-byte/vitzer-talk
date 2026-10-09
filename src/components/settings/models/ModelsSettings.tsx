@@ -30,6 +30,10 @@ const modelSupportsLanguage = (model: ModelInfo, langCode: string): boolean => {
 const isLegacyModel = (model: ModelInfo): boolean =>
   typeof model.source === "object" && "Url" in model.source;
 
+// Vitzer Talk offers a short curated model list, so the catalog search and
+// filter controls stay hidden. Flip this if the full catalog comes back.
+const SHOW_CATALOG_FILTERS = false;
+
 export const ModelsSettings: React.FC = () => {
   const { t } = useTranslation();
   const [switchingModelId, setSwitchingModelId] = useState<string | null>(null);
@@ -249,7 +253,7 @@ export const ModelsSettings: React.FC = () => {
       </div>
 
       {/* Search bar — filter the catalog by name or description */}
-      <div className="relative">
+      <div className={SHOW_CATALOG_FILTERS ? "relative" : "hidden"}>
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text/40 pointer-events-none" />
         <input
           type="text"
@@ -267,7 +271,11 @@ export const ModelsSettings: React.FC = () => {
             <h2 className="text-sm font-medium text-text/60">
               {t("settings.models.yourModels")}
             </h2>
-            <div className="flex items-center gap-2">
+            <div
+              className={
+                SHOW_CATALOG_FILTERS ? "flex items-center gap-2" : "hidden"
+              }
+            >
               {/* Rescan local sources for models added outside Handy */}
               <button
                 type="button"

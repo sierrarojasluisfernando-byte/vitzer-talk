@@ -10,7 +10,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 pub async fn get_available_models(
     model_manager: State<'_, Arc<ModelManager>>,
 ) -> Result<Vec<ModelInfo>, String> {
-    Ok(model_manager.get_available_models())
+    Ok(model_manager.get_visible_models())
 }
 
 #[tauri::command]

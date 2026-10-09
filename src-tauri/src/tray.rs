@@ -317,7 +317,7 @@ fn compute_desired(app: &AppHandle, icon_state: TrayIconState) -> TrayDesired {
 
     let mut downloaded_models: Vec<(String, String)> = app
         .state::<Arc<ModelManager>>()
-        .get_available_models()
+        .get_visible_models()
         .into_iter()
         .filter(|m| m.is_downloaded)
         .map(|m| (m.id, m.name))
