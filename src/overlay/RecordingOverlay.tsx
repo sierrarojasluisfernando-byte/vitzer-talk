@@ -234,6 +234,8 @@ const RecordingOverlay: React.FC = () => {
         <i
           key={i}
           style={{
+            // Blue → violet across the bars (see .swave i).
+            ["--mix" as string]: `${Math.round((i / (WAVE_BARS - 1)) * 100)}%`,
             height: `${Math.max(3, Math.min(18, 3 + Math.pow(v, 0.7) * 15))}px`,
           }}
         />
@@ -241,26 +243,27 @@ const RecordingOverlay: React.FC = () => {
     </div>
   );
 
-  // Vitzer brand mark (same gradient "V" as the app icon), shown at the start
-  // of every control row.
-  const brandMark = (
-    <svg className="sbrand" viewBox="0 0 18 18" aria-hidden="true">
-      <defs>
-        <linearGradient id="vitzer-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#4169E1" />
-          <stop offset="100%" stopColor="#8B5CF6" />
-        </linearGradient>
-      </defs>
-      <rect width="18" height="18" rx="4.5" fill="url(#vitzer-mark)" />
-      <path
-        d="M5.4 5.6 L9 12.6 L12.6 5.6"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+  // Vitzer brand mark: the gradient "V" doubles as the status indicator. It
+  // pulses while capturing, sits muted while arming, and shrinks inside a
+  // spinning ring while transcribing.
+  const brandMark = (mode: "ready" | "arming" | "working") => (
+    <span className={`sbrand ${mode}`}>
+      <svg viewBox="0 0 18 18" aria-hidden="true">
+        <defs>
+          <linearGradient id="vitzer-mark" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" className="sbrand-from" />
+            <stop offset="100%" className="sbrand-to" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M3.6 4.2 L9 14 L14.4 4.2"
+          fill="none"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
   );
 
   const cancelBtn = (
@@ -280,13 +283,12 @@ const RecordingOverlay: React.FC = () => {
     </button>
   );
 
-  // dot (left) | waveform (center) | timer + cancel (right) — same structure for
+  // brand mark (left) | waveform (center) | timer + cancel (right) — same structure for
   // pill & panel, so the Live morph is a pure width change.
   const listeningRow = (showTimer: boolean, showCancel: boolean) => (
     <div className="sbase">
       <div className="sbase-l">
-        {brandMark}
-        <span className={`sdot ${captureReady ? "ready" : "arming"}`} />
+        {brandMark(captureReady ? "ready" : "arming")}
       </div>
       {waveform}
       <div className="sbase-r">
@@ -296,13 +298,12 @@ const RecordingOverlay: React.FC = () => {
     </div>
   );
 
-  // spinner (left) | label (center) | cancel (right) — same 3-zone grid as the
+  // brand mark in a spinner ring (left) | label (center) | cancel (right) — same 3-zone grid as the
   // listening row, so the label is centered.
   const workingRow = (label: string, showCancel: boolean) => (
     <div className="sbase">
       <div className="sbase-l">
-        {brandMark}
-        <span className="sspinner" />
+        {brandMark("working")}
       </div>
       <span className="swork-label">{label}</span>
       <div className="sbase-r">{showCancel && cancelBtn}</div>
