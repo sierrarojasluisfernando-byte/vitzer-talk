@@ -629,3 +629,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.vfoot b {
+  display: block;
+  font-weight: 600;
+  color: var(--s-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

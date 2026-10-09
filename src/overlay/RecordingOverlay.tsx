@@ -25,7 +25,9 @@ const DOT_COUNT = 31;
 const DOT_CENTER = (DOT_COUNT - 1) / 2;
 const BRAND_NAME = "Vitzer";
 const BRAND_PRODUCT = "Talk";
-const BRAND_TAGLINE = "Automatización con IA · vitzer.co";
+const BRAND_TAGLINE = "Automatización con IA";
+// Provisional: the Vercel address until Vitzer has its own domain.
+const BRAND_SITE = "vitzer-portafolio.vercel.app";
 
 // Only call out a model load in the Live preview once it has run this long.
 // Warm loads finish in well under this (~0.2s on Apple Silicon, ~1.5s on a
@@ -428,7 +430,10 @@ const RecordingOverlay: React.FC = () => {
         <div className="vbody">
           {working ? <span className="swork-label">{workLabel}</span> : dots}
         </div>
-        <div className="vfoot">{BRAND_TAGLINE}</div>
+        <div className="vfoot">
+          {BRAND_TAGLINE}
+          <b>{BRAND_SITE}</b>
+        </div>
       </div>
     </div>
   );
