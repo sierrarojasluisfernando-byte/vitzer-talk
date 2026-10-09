@@ -1,0 +1,32 @@
+name: "Vitzer Talk installers"
+
+# Manual, unsigned builds of the Windows and macOS installers.
+# Run from the Actions tab; the installers are attached to the run as artifacts.
+on: workflow_dispatch
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "windows-latest"
+            args: ""
+            target: "x86_64-pc-windows-msvc"
+          - platform: "macos-26" # Apple Silicon (M1 and later)
+            args: "--target aarch64-apple-darwin"
+            target: "aarch64-apple-darwin"
+          - platform: "macos-latest" # Intel Macs
+            args: "--target x86_64-apple-darwin"
+            target: "x86_64-apple-darwin"
+
+    uses: ./.github/workflows/build.yml
+    with:
+      platform: ${{ matrix.platform }}
+      target: ${{ matrix.target }}
+      build-args: ${{ matrix.args }}
+      sign-binaries: false
+      asset-prefix: "vitzer-talk"
+      upload-artifacts: true
