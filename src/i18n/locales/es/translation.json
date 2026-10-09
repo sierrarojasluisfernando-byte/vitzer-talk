@@ -13,7 +13,7 @@
     "general": "General",
     "models": "Modelos",
     "advanced": "Avanzado",
-    "postProcessing": "Post proceso",
+    "postProcessing": "Corrección con IA",
     "history": "Historial",
     "debug": "Depuración",
     "about": "Acerca de"
@@ -419,11 +419,12 @@
       }
     },
     "postProcessing": {
+      "note": "Opcional: sin clave, Vitzer Talk funciona completo y sin internet. Con este atajo, el texto dictado pasa por la IA que elijas antes de pegarse. Groq y Google Gemini ofrecen clave de API gratuita; OpenAI y Anthropic la cobran aparte, y las suscripciones de ChatGPT o Claude no la incluyen.",
       "hotkey": {
         "title": "Tecla de acceso rápido"
       },
       "api": {
-        "title": "API (compatible con OpenAI)",
+        "title": "Proveedor de IA",
         "provider": {
           "title": "Proveedor",
           "description": "Selecciona un proveedor compatible con OpenAI."

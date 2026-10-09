@@ -419,6 +419,7 @@
       }
     },
     "postProcessing": {
+      "note": "Optional: without a key, Vitzer Talk works fully offline. With this shortcut, dictated text goes through the AI you choose before it is pasted. Groq and Google Gemini offer a free API key; OpenAI and Anthropic bill separately, and ChatGPT or Claude subscriptions do not include one.",
       "hotkey": {
         "title": "Hotkey"
       },
