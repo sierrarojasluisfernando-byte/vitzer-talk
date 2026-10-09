@@ -316,6 +316,7 @@ fn gated_filler_words_for_language(lang: &str) -> &'static [&'static str] {
         "en" => &["um", "ah", "eh"],
         "de" => &["äh", "ähm"],
         "fr" => &["euh"],
+        "es" => &["eh", "em", "emm", "mm"],
         _ => &[],
     }
 }
@@ -457,13 +458,46 @@ pub fn remove_filler_words(
         filtered = remove_filler_matches(&filtered, pattern);
     }
 
+    if language.language().map(base_language) == Some("es") {
+        filtered = collapse_hesitation_repeats(&filtered, SPANISH_HESITATION_WORDS);
+    }
+
     filtered
 }
 
-/// Applies non-filler transcription cleanup.
-///
-/// Kept separate from [`remove_filler_words`] so disabling filler deletion
-/// does not also disable the existing repeated-word and whitespace cleanup.
+fn base_language(lang: &str) -> &str {
+    lang.split(&['-', '_'][..]).next().unwrap_or(lang)
+}
+
+/// Short Spanish function words speakers restart on while thinking
+/// ("los los", "en, en"). A doubled one is a hesitation, never intended text,
+/// unlike content words that are doubled on purpose ("muy muy", "no, no").
+const SPANISH_HESITATION_WORDS: &[&str] = &[
+    "el", "la", "los", "las", "un", "una", "unos", "unas", "de", "del", "al", "en", "con", "por",
+    "para", "que", "y", "a", "se", "lo", "le", "les", "me", "te", "mi", "su", "es", "como",
+];
+
+/// Collapses an immediately repeated word from `words` into one occurrence,
+/// ignoring case and a comma between the two ("en, en casa" -> "en casa").
+/// Runs of any length collapse, so "los los los" also becomes "los".
+fn collapse_hesitation_repeats(text: &str, words: &[&str]) -> String {
+    let tokens: Vec<&str> = text.split_whitespace().collect();
+    let key = |token: &str| token.trim_end_matches(',').to_lowercase();
+    let mut out: Vec<&str> = Vec::with_capacity(tokens.len());
+    for token in tokens {
+        let current = key(token);
+        let repeats_previous = out
+            .last()
+            .is_some_and(|prev| key(prev) == current && words.contains(&current.as_str()));
+        if repeats_previous {
+            // Keep the later token: it carries the punctuation that follows.
+            out.pop();
+        }
+        out.push(token);
+    }
+    out.join(" ")
+}
+
 /// Applies exact, user-defined replacements to the transcription.
 ///
 /// Matching ignores case and only fires on whole words (the match must not be
@@ -517,6 +551,10 @@ pub fn apply_text_replacements(text: &str, replacements: &[(String, String)]) ->
     out
 }
 
+/// Applies non-filler transcription cleanup.
+///
+/// Kept separate from [`remove_filler_words`] so disabling filler deletion
+/// does not also disable the existing repeated-word and whitespace cleanup.
 pub fn normalize_transcription_output(text: &str) -> String {
     let mut normalized = collapse_stutters(text);
 
@@ -551,6 +589,28 @@ mod tests {
             .iter()
             .map(|(a, b)| (a.to_string(), b.to_string()))
             .collect()
+    }
+
+    #[test]
+    fn test_spanish_hesitations_are_cleaned() {
+        let result = filter_transcription_output(
+            "esos dos párrafos los los eh los hice en, en Word",
+            "es",
+            &None,
+        );
+        assert_eq!(result, "esos dos párrafos los hice en Word");
+    }
+
+    #[test]
+    fn test_spanish_intentional_repeats_are_kept() {
+        let result = filter_transcription_output("es muy muy bueno, no, no quiero", "es", &None);
+        assert_eq!(result, "es muy muy bueno, no, no quiero");
+    }
+
+    #[test]
+    fn test_hesitation_cleanup_is_spanish_only() {
+        let result = filter_transcription_output("que que voulez-vous", "fr", &None);
+        assert_eq!(result, "que que voulez-vous");
     }
 
     #[test]

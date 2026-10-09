@@ -1271,6 +1271,10 @@ impl TranscriptionManager {
         // extension.
         let model_takes_initial_prompt = info.supports_initial_prompt;
         let model_is_whisper = info.arch == "whisper";
+        // Canary punctuates a short phrase well but returns one unpunctuated run
+        // for a long dictation, so it is fed phrase by phrase (see below).
+        let split_at_pauses = info.arch.starts_with("canary");
+        let (pause_marks, recorded_len) = crate::audio_toolkit::take_pause_marks();
         let model_supports_translate = info.capabilities.supports_translate;
         let languages = info.capabilities.languages;
         debug!(
@@ -1319,25 +1323,66 @@ impl TranscriptionManager {
             run_options.family.is_some()
         );
 
-        let transcript = match self.engine.transcribe(audio, run_options) {
-            Ok(transcript) => transcript,
-            Err(EngineError::Cancelled) => return Err(EngineError::Cancelled.into()),
-            Err(e) => {
-                self.forget_model_if_engine_dropped(active_model, &e.to_string());
-                return Err(anyhow::anyhow!(
-                    "transcribe-cpp transcription failed: {}",
-                    e
-                ));
-            }
+        // The marks index the recorder's buffer; the audio manager may only
+        // have appended padding since, so anything else means they belong to
+        // a different recording and are ignored.
+        let marks_match_audio = recorded_len > 0
+            && audio.len() >= recorded_len
+            && audio.len() - recorded_len <= PHRASE_MAX_TRAILING_PAD;
+        let segments = if split_at_pauses && marks_match_audio {
+            plan_phrase_segments(audio.len(), &pause_marks, PHRASE_MIN_SAMPLES)
+        } else {
+            vec![(0, audio.len())]
         };
+        if segments.len() > 1 {
+            debug!(
+                "Splitting {:.1}s of audio into {} phrases at pauses",
+                audio.len() as f64 / 16_000.0,
+                segments.len()
+            );
+        }
+
+        let mut texts: Vec<String> = Vec::with_capacity(segments.len());
+        let mut detected_language = None;
+        let single = segments.len() == 1;
+        let mut whole = Some(audio);
+        for (start, end) in segments {
+            let pcm = if single {
+                whole.take().unwrap_or_default()
+            } else {
+                whole
+                    .as_ref()
+                    .map(|a| a[start..end].to_vec())
+                    .unwrap_or_default()
+            };
+            let transcript = match self.engine.transcribe(pcm, run_options.clone()) {
+                Ok(transcript) => transcript,
+                Err(EngineError::Cancelled) => return Err(EngineError::Cancelled.into()),
+                Err(e) => {
+                    self.forget_model_if_engine_dropped(active_model, &e.to_string());
+                    return Err(anyhow::anyhow!(
+                        "transcribe-cpp transcription failed: {}",
+                        e
+                    ));
+                }
+            };
+            if detected_language.is_none() {
+                detected_language = transcript.language;
+            }
+            let text = transcript.text.trim();
+            if !text.is_empty() {
+                texts.push(text.to_string());
+            }
+        }
+        let transcript_text = texts.join(" ");
         Ok(RunOutcome {
-            text: transcript.text,
+            text: transcript_text,
             languages,
             applied_language_hint,
             output_was_translated,
             // Whisper's audio-based LID (auto mode only; `None` when a
             // language hint was passed).
-            model_detected_language: transcript.language,
+            model_detected_language: detected_language,
             model_is_whisper,
         })
     }
@@ -1524,6 +1569,43 @@ struct RunOutcome {
     /// INVALID_ARG, so the whisper extension must be gated on the arch, not
     /// on the feature (see #1601).
     model_is_whisper: bool,
+}
+
+/// Phrases shorter than this are merged into a neighbour: a model needs some
+/// context, and a stray half-second cut would otherwise become its own run.
+const PHRASE_MIN_SAMPLES: usize = 16_000 * 2;
+
+/// The audio manager pads very short recordings with trailing silence.
+const PHRASE_MAX_TRAILING_PAD: usize = 16_000 * 2;
+
+/// Turns the recorder's pause marks into `(start, end)` sample ranges covering
+/// the whole buffer. Marks outside the buffer are dropped and ranges shorter
+/// than `min_len` are merged into the following one (the last into the previous).
+fn plan_phrase_segments(len: usize, marks: &[usize], min_len: usize) -> Vec<(usize, usize)> {
+    let mut cuts: Vec<usize> = marks
+        .iter()
+        .copied()
+        .filter(|m| *m > 0 && *m < len)
+        .collect();
+    cuts.sort_unstable();
+    cuts.dedup();
+
+    let mut segments: Vec<(usize, usize)> = Vec::with_capacity(cuts.len() + 1);
+    let mut start = 0;
+    for cut in cuts {
+        if cut - start >= min_len {
+            segments.push((start, cut));
+            start = cut;
+        }
+    }
+    if len - start < min_len {
+        if let Some(last) = segments.last_mut() {
+            last.1 = len;
+            return segments;
+        }
+    }
+    segments.push((start, len));
+    segments
 }
 
 fn emit_stream_text(app_handle: &AppHandle, committed: &str, tentative: &str) {
@@ -2150,6 +2232,25 @@ mod tests {
 
     fn languages(codes: &[&str]) -> Vec<String> {
         codes.iter().map(|code| (*code).to_string()).collect()
+    }
+
+    #[test]
+    fn phrase_segments_cover_the_buffer_and_merge_short_ones() {
+        // No marks: one segment.
+        assert_eq!(plan_phrase_segments(100, &[], 20), vec![(0, 100)]);
+        // Two clean cuts.
+        assert_eq!(
+            plan_phrase_segments(100, &[30, 60], 20),
+            vec![(0, 30), (30, 60), (60, 100)]
+        );
+        // A cut too close to the previous one is skipped; a short tail joins
+        // the last segment; out-of-range marks are ignored.
+        assert_eq!(
+            plan_phrase_segments(100, &[30, 40, 90, 0, 100, 500], 20),
+            vec![(0, 30), (30, 100)]
+        );
+        // Everything shorter than the minimum stays whole.
+        assert_eq!(plan_phrase_segments(15, &[5, 10], 20), vec![(0, 15)]);
     }
 
     #[test]

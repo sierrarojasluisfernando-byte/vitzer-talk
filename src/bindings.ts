@@ -304,17 +304,17 @@ async setPostProcessSelectedPrompt(id: string) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async updateTextReplacements(replacements: TextReplacement[]) : Promise<Result<null, string>> {
+async updateCustomWords(words: string[]) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("update_text_replacements", { replacements }) };
+    return { status: "ok", data: await TAURI_INVOKE("update_custom_words", { words }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
 },
-async updateCustomWords(words: string[]) : Promise<Result<null, string>> {
+async updateTextReplacements(replacements: TextReplacement[]) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("update_custom_words", { words }) };
+    return { status: "ok", data: await TAURI_INVOKE("update_text_replacements", { replacements }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -957,17 +957,8 @@ streamTextEvent: "stream-text-event"
 /** user-defined types **/
 
 /**
- * The container-level `serde(default)` (backed by the `Default` impl below)
- * guarantees every field — including ones added in the future — falls back to
- * its `get_default_settings()` value when missing from a stored settings
- * object, so a partial store can never fail the whole load (#1619).
  * Field-level defaults below take precedence where present.
  */
-/**
- * An exact, user-defined substitution applied to the final transcription
- * (e.g. a brand name the model consistently mishears).
- */
-export type TextReplacement = { from: string; to: string }
 export type AppSettings = { 
 /**
  * Internal settings schema marker for one-time migrations. Fresh installs
@@ -1196,6 +1187,15 @@ export type StreamTextEvent = { committed: string; tentative: string }
  * Semantic kind of "working" phase, used to localize the spinner label.
  */
 export type StreamWorkKind = "transcribing" | "polishing"
+/**
+ * The container-level `serde(default)` (backed by the `Default` impl below)
+ * guarantees every field — including ones added in the future — falls back to
+ * its `get_default_settings()` value when missing from a stored settings
+ * object, so a partial store can never fail the whole load (#1619).
+ * An exact, user-defined substitution applied to the final transcription
+ * (e.g. a brand name the model consistently mishears).
+ */
+export type TextReplacement = { from: string; to: string }
 /**
  * UI appearance mode. `System` follows the OS `prefers-color-scheme`; `Light`
  * and `Dark` force one of the two palettes Handy already ships.

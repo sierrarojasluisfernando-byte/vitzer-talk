@@ -628,6 +628,42 @@ pub fn is_no_input_device_error(error_message: &str) -> bool {
             && normalized.contains("coreaudio"))
 }
 
+/// Silence the VAD must drop (beyond its hangover tail) before the gap counts
+/// as a pause between phrases.
+const PAUSE_MIN_NOISE_SAMPLES: usize = constants::WHISPER_SAMPLE_RATE as usize * 3 / 10;
+
+/// Where the speaker paused during the last recording, as sample offsets into
+/// the VAD-filtered buffer. The VAD removes the silence itself, so these marks
+/// are the only trace of it; the transcription step uses them to split long
+/// dictations into phrases.
+#[derive(Default)]
+struct PauseState {
+    marks: Vec<usize>,
+    noise_run: usize,
+    recorded_len: usize,
+}
+
+static PAUSE_STATE: Mutex<PauseState> = Mutex::new(PauseState {
+    marks: Vec::new(),
+    noise_run: 0,
+    recorded_len: 0,
+});
+
+fn reset_pause_marks() {
+    *PAUSE_STATE.lock().unwrap() = PauseState::default();
+}
+
+/// Takes the pause marks of the last recording together with the length of the
+/// buffer they index into. Consumed once so a later, unrelated transcription
+/// never inherits them.
+pub fn take_pause_marks() -> (Vec<usize>, usize) {
+    let mut state = PAUSE_STATE.lock().unwrap();
+    let recorded_len = state.recorded_len;
+    let marks = std::mem::take(&mut state.marks);
+    *state = PauseState::default();
+    (marks, recorded_len)
+}
+
 /// Route one 16 kHz frame through VAD to recording and live outputs.
 /// Kept free-standing to permit disjoint borrows around resampler callbacks.
 fn handle_frame(
@@ -655,8 +691,21 @@ fn handle_frame(
             .push_frame(samples)
             .unwrap_or(VadFrame::Speech(samples))
         {
-            VadFrame::Speech(buf) => emit(buf),
-            VadFrame::Noise => {}
+            VadFrame::Speech(buf) => {
+                {
+                    let mut pause = PAUSE_STATE.lock().unwrap();
+                    if pause.noise_run >= PAUSE_MIN_NOISE_SAMPLES && pause.recorded_len > 0 {
+                        let at = pause.recorded_len;
+                        pause.marks.push(at);
+                    }
+                    pause.noise_run = 0;
+                    pause.recorded_len += buf.len();
+                }
+                emit(buf)
+            }
+            VadFrame::Noise => {
+                PAUSE_STATE.lock().unwrap().noise_run += samples.len();
+            }
         }
     } else {
         emit(samples);
@@ -779,6 +828,7 @@ impl CaptureProcessor {
         self.overrun_warning_logged = false;
         self.vad_policy = policy;
         self.processed_samples.clear();
+        reset_pause_marks();
         self.visualizer.reset();
         self.frame_resampler.reset();
         if policy != VadPolicy::Disabled {
