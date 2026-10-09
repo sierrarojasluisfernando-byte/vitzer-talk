@@ -19,6 +19,14 @@ type OverlayState = "recording" | "streaming" | "transcribing" | "processing";
 // every overlay form). Mic levels arrive as 16 FFT buckets; we take the first N.
 const WAVE_BARS = 9;
 
+// Branded compact card: a dotted voice line mirrored around its center. Dot k
+// steps away from the middle reads FFT bucket k, so speech swells outward.
+const DOT_COUNT = 31;
+const DOT_CENTER = (DOT_COUNT - 1) / 2;
+const BRAND_NAME = "Vitzer";
+const BRAND_PRODUCT = "Talk";
+const BRAND_TAGLINE = "Automatización con IA · vitzer.co";
+
 // Only call out a model load in the Live preview once it has run this long.
 // Warm loads finish in well under this (~0.2s on Apple Silicon, ~1.5s on a
 // Windows CPU backend), so the common case never flashes a loading notice while
@@ -45,6 +53,7 @@ const RecordingOverlay: React.FC = () => {
   // it open after the load so it doesn't collapse and reopen when text arrives.
   const [loadNoticeShown, setLoadNoticeShown] = useState(false);
   const [levels, setLevels] = useState<number[]>(Array(WAVE_BARS).fill(0));
+  const [spectrum, setSpectrum] = useState<number[]>(Array(16).fill(0));
   const [streamText, setStreamText] = useState<StreamTextEvent>({
     committed: "",
     tentative: "",
@@ -81,6 +90,7 @@ const RecordingOverlay: React.FC = () => {
           setCaptureReady(false);
           smoothedLevelsRef.current = Array(16).fill(0);
           setLevels(Array(WAVE_BARS).fill(0));
+          setSpectrum(Array(16).fill(0));
           setStreamText({ committed: "", tentative: "" });
         }
 
@@ -128,6 +138,7 @@ const RecordingOverlay: React.FC = () => {
         });
         smoothedLevelsRef.current = smoothed;
         setLevels(smoothed.slice(0, WAVE_BARS));
+        setSpectrum(smoothed);
       });
 
       const unlistenStream = await events.streamTextEvent.listen((event) => {
@@ -370,22 +381,54 @@ const RecordingOverlay: React.FC = () => {
     );
   }
 
-  // ---- Minimal overlay: exactly one row at a time — waveform (recording), or a
-  // spinner + label (transcribing / processing). Never both. The pill animates its
-  // width between them; the cancel button is in both rows so it stays put.
+  // ---- Compact overlay: a branded card — mark + name on top, the dotted voice
+  // line (recording) or the working label in the middle, the tagline below. The
+  // card keeps one size across states, so nothing jumps when recording stops.
   const working = state === "transcribing" || state === "processing";
   const workLabel =
     state === "processing" ? t("overlay.processing") : transcribingLabel;
+  const markMode = working ? "working" : captureReady ? "ready" : "arming";
+
+  const dots = (
+    <div className={`vdots ${captureReady ? "ready" : "arming"}`}>
+      {Array.from({ length: DOT_COUNT }, (_, i) => {
+        const distance = Math.abs(i - DOT_CENTER);
+        const v = spectrum[distance] || 0;
+        return (
+          <i
+            key={i}
+            style={{
+              ["--mix" as string]: `${Math.round((i / (DOT_COUNT - 1)) * 100)}%`,
+              ["--i" as string]: distance,
+              height: `${Math.max(3, Math.min(22, 3 + Math.pow(v, 0.7) * 19))}px`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
 
   return (
     <div
       dir={direction}
       className={`ov-stage ${position} ov-fade ${isVisible ? "show" : ""}`}
     >
-      <div
-        className={`scard compact ${working && isVisible ? "cworking" : ""}`}
-      >
-        {working ? workingRow(workLabel, true) : listeningRow(false, true)}
+      <div className="scard compact vcard">
+        <div className="vhead">
+          <span className="vhead-side" />
+          <div className="vbrand">
+            {brandMark(markMode)}
+            <span className="vname">
+              {BRAND_NAME}
+              <b>{BRAND_PRODUCT}</b>
+            </span>
+          </div>
+          {cancelBtn}
+        </div>
+        <div className="vbody">
+          {working ? <span className="swork-label">{workLabel}</span> : dots}
+        </div>
+        <div className="vfoot">{BRAND_TAGLINE}</div>
       </div>
     </div>
   );

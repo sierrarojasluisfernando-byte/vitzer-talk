@@ -61,6 +61,7 @@
                          center longer labels; shared by Live (collapsed) + minimal */
   --ov-open-w: 392px; /* Live panel, expanded */
   --ov-base-h: 40px; /* control-row height (.sbase) */
+  --ov-card-w: 252px; /* branded compact card (recording / transcribing) */
   --ov-cap-max-h: 64px; /* max height of the scrolling live-text region */
 }
 @media (prefers-color-scheme: dark) {
@@ -538,6 +539,93 @@
   padding: 0 8px; /* breathing room from the spinner / cancel when content-sized */
   /* Safety net: ellipsize rather than clip if a label exceeds the max pill width. */
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   Branded compact card — mark + name, dotted voice line, tagline. One fixed
+   size for recording and working, so only the middle row changes.
+   ============================================================ */
+.scard.compact.vcard {
+  width: var(--ov-card-w);
+  border-radius: 16px;
+}
+.vhead {
+  display: grid;
+  grid-template-columns: 22px 1fr 22px;
+  align-items: center;
+  padding: 8px 9px 0;
+}
+.vbrand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.vname {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.vname b {
+  font-weight: 400;
+  margin-left: 0.28em;
+  color: var(--s-muted);
+}
+.vbody {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vdots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+.vdots i {
+  width: 3px;
+  min-height: 3px;
+  max-height: 22px;
+  border-radius: 2px;
+  background: color-mix(
+    in srgb,
+    var(--s-accent),
+    var(--s-accent-2) var(--mix, 0%)
+  );
+  transition:
+    height 80ms linear,
+    background-color 180ms ease,
+    opacity 180ms ease;
+}
+/* Arming: a muted ripple travels out from the center until audio flows. */
+.vdots.arming i {
+  height: 3px !important;
+  background: var(--s-muted);
+  opacity: 0.3;
+  animation: vdots-arming 1100ms ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes vdots-arming {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+.vfoot {
+  padding: 0 10px 9px;
+  font-size: 10.5px;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--s-faint);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
