@@ -241,6 +241,28 @@ const RecordingOverlay: React.FC = () => {
     </div>
   );
 
+  // Vitzer brand mark (same gradient "V" as the app icon), shown at the start
+  // of every control row.
+  const brandMark = (
+    <svg className="sbrand" viewBox="0 0 18 18" aria-hidden="true">
+      <defs>
+        <linearGradient id="vitzer-mark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#4169E1" />
+          <stop offset="100%" stopColor="#8B5CF6" />
+        </linearGradient>
+      </defs>
+      <rect width="18" height="18" rx="4.5" fill="url(#vitzer-mark)" />
+      <path
+        d="M5.4 5.6 L9 12.6 L12.6 5.6"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
   const cancelBtn = (
     <button
       className="sx"
@@ -263,6 +285,7 @@ const RecordingOverlay: React.FC = () => {
   const listeningRow = (showTimer: boolean, showCancel: boolean) => (
     <div className="sbase">
       <div className="sbase-l">
+        {brandMark}
         <span className={`sdot ${captureReady ? "ready" : "arming"}`} />
       </div>
       {waveform}
@@ -278,6 +301,7 @@ const RecordingOverlay: React.FC = () => {
   const workingRow = (label: string, showCancel: boolean) => (
     <div className="sbase">
       <div className="sbase-l">
+        {brandMark}
         <span className="sspinner" />
       </div>
       <span className="swork-label">{label}</span>

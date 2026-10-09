@@ -53,7 +53,7 @@
   --ov-rest-w: 172px; /* resting compact pill (minimal, recording) -- roomy enough
                          for the English working label before the grow starts */
   --ov-pill-w: 184px; /* base width / Live pill before it opens or collapses */
-  --ov-work-w: 216px; /* working pill (transcribing / polishing) -- wide enough to
+  --ov-work-w: 228px; /* working pill (transcribing / polishing) -- wide enough to
                          center longer labels; shared by Live (collapsed) + minimal */
   --ov-open-w: 392px; /* Live panel, expanded */
   --ov-base-h: 40px; /* control-row height (.sbase) */
@@ -297,17 +297,25 @@
   flex: none; /* the control row never squashes; only the text region gives */
   padding: 0 10px;
   display: grid;
-  /* Equal side columns (min 22px to hold the cancel button) keep the center item
+  /* Equal side columns (min 38px to hold the brand mark + dot) keep the center item
      — waveform or label — centered whether the pill is at min width or content-
      sized. */
-  grid-template-columns: minmax(22px, 1fr) auto minmax(22px, 1fr);
+  grid-template-columns: minmax(38px, 1fr) auto minmax(38px, 1fr);
   align-items: center;
 }
 .sbase-l {
   display: flex;
-  padding-left: 5px;
+  padding-left: 2px;
+  gap: 7px;
   align-items: center;
   justify-self: start;
+}
+/* Vitzer brand mark at the start of the control row. */
+.sbrand {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  display: block;
 }
 .sbase-r {
   display: flex;
