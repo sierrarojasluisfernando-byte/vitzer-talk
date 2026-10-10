@@ -10,13 +10,16 @@
     "secureInputWarning": "⚠ Atajos bloqueados por Secure Input"
   },
   "sidebar": {
-    "general": "General",
+    "general": "Configuración",
     "models": "Modelos",
     "advanced": "Avanzado",
     "postProcessing": "Corrección IA",
     "history": "Historial",
     "debug": "Depuración",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "home": "Inicio",
+    "dictionary": "Diccionario",
+    "help": "Ayuda"
   },
   "onboarding": {
     "subtitle": "Para comenzar, elige un modelo de transcripción",
@@ -655,6 +658,29 @@
         "label": "Mostrar novedades",
         "description": "Mostrar notas de la versión después de las actualizaciones de Vitzer Talk"
       }
+    },
+    "dictionary": {
+      "words": {
+        "title": "Palabras propias",
+        "description": "Palabras que Vitzer Talk debe reconocer aunque suenen parecido a otras."
+      },
+      "replacements": {
+        "title": "Reemplazos",
+        "description": "Cuando el dictado escriba una cosa, cámbiala siempre por otra."
+      },
+      "techNote": "La corrección con IA ya incluye un diccionario de tecnología (Claude Code, GitHub, n8n, API y otros); no necesitas agregarlos aquí."
+    },
+    "help": {
+      "contact": {
+        "group": "Contacto",
+        "title": "¿Necesitas ayuda o tienes una sugerencia?",
+        "description": "Escríbenos desde la página de contacto de Vitzer.",
+        "button": "Ir a contacto"
+      },
+      "logs": {
+        "group": "Registros",
+        "description": "Si reportas un problema, estos archivos nos ayudan a encontrar la causa. No se envían solos."
+      }
     }
   },
   "footer": {
@@ -734,5 +760,45 @@
     "learnMore": "Cómo solucionarlo",
     "recorderBlocked": "Ahora mismo no se pueden grabar atajos: Secure Input de macOS está bloqueando los eventos de teclado. Resuelve primero el aviso de Secure Input.",
     "dismiss": "Descartar"
+  },
+  "pages": {
+    "home": {
+      "title": "Inicio",
+      "description": "Tus dictados recientes. Cópialos, vuelve a escucharlos o repítelos con otro modelo."
+    },
+    "dictionary": {
+      "title": "Diccionario",
+      "description": "Enséñale a Vitzer Talk tus nombres, marcas y términos para que los escriba bien."
+    },
+    "general": {
+      "title": "Configuración",
+      "description": "Atajos, micrófono, modelo de voz y preferencias de la aplicación."
+    },
+    "postProcessing": {
+      "title": "Corrección con IA",
+      "description": "Pule el texto dictado con la inteligencia artificial que elijas. Es opcional."
+    },
+    "debug": {
+      "title": "Depuración",
+      "description": "Herramientas de diagnóstico."
+    },
+    "about": {
+      "title": "Acerca de Vitzer Talk",
+      "description": "Versión, datos de la aplicación y reconocimientos."
+    },
+    "help": {
+      "title": "Ayuda y soporte",
+      "description": "Si algo no funciona como esperabas, escríbenos."
+    }
+  },
+  "vitzerModels": {
+    "fast": {
+      "name": "Rápido",
+      "description": "Respuesta casi inmediata en cualquier equipo. Modelo Canary 180M."
+    },
+    "precise": {
+      "name": "Preciso",
+      "description": "La mejor calidad sin internet. Más lento en equipos modestos. Modelo Canary 1B v2."
+    }
   }
 }

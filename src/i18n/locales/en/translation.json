@@ -10,13 +10,16 @@
     "secureInputWarning": "⚠ Shortcuts blocked by Secure Input"
   },
   "sidebar": {
-    "general": "General",
+    "general": "Settings",
     "models": "Models",
     "advanced": "Advanced",
     "postProcessing": "Post Process",
     "history": "History",
     "debug": "Debug",
-    "about": "About"
+    "about": "About",
+    "home": "Home",
+    "dictionary": "Dictionary",
+    "help": "Help"
   },
   "onboarding": {
     "subtitle": "To get started, choose a transcription model",
@@ -655,6 +658,29 @@
           "details": "Vitzer Talk's local speech-to-text is built on transcribe.cpp and ggml. Thanks to the amazing work by Georgi Gerganov and contributors."
         }
       }
+    },
+    "dictionary": {
+      "words": {
+        "title": "Custom words",
+        "description": "Words Vitzer Talk should recognize even when they sound like others."
+      },
+      "replacements": {
+        "title": "Replacements",
+        "description": "When dictation writes one thing, always change it to another."
+      },
+      "techNote": "AI correction already includes a technology dictionary (Claude Code, GitHub, n8n, API and more); no need to add those here."
+    },
+    "help": {
+      "contact": {
+        "group": "Contact",
+        "title": "Need help or have a suggestion?",
+        "description": "Write to us from the Vitzer contact page.",
+        "button": "Go to contact"
+      },
+      "logs": {
+        "group": "Logs",
+        "description": "If you report a problem, these files help us find the cause. They are never sent automatically."
+      }
     }
   },
   "footer": {
@@ -734,5 +760,45 @@
     "learnMore": "How to fix",
     "recorderBlocked": "Can't record shortcuts right now — macOS Secure Input is blocking key events. Resolve the Secure Input warning first.",
     "dismiss": "Dismiss"
+  },
+  "pages": {
+    "home": {
+      "title": "Home",
+      "description": "Your recent dictations. Copy them, listen again or redo them with another model."
+    },
+    "dictionary": {
+      "title": "Dictionary",
+      "description": "Teach Vitzer Talk your names, brands and terms so it writes them correctly."
+    },
+    "general": {
+      "title": "Settings",
+      "description": "Shortcuts, microphone, voice model and app preferences."
+    },
+    "postProcessing": {
+      "title": "AI correction",
+      "description": "Polish dictated text with the AI of your choice. Optional."
+    },
+    "debug": {
+      "title": "Debug",
+      "description": "Diagnostic tools."
+    },
+    "about": {
+      "title": "About Vitzer Talk",
+      "description": "Version, app data and acknowledgments."
+    },
+    "help": {
+      "title": "Help and support",
+      "description": "If something does not work as expected, write to us."
+    }
+  },
+  "vitzerModels": {
+    "fast": {
+      "name": "Fast",
+      "description": "Near-instant on any computer. Canary 180M model."
+    },
+    "precise": {
+      "name": "Precise",
+      "description": "The best offline quality. Slower on modest computers. Canary 1B v2 model."
+    }
   }
 }

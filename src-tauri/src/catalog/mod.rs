@@ -216,7 +216,9 @@ pub fn rank_of(model_id: &str) -> u32 {
 /// lists — so bringing a model back is a one-line change here.
 const FEATURED_REPOS: &[&str] = &[
     "handy-computer/canary-180m-flash-gguf",
-    "handy-computer/parakeet-tdt-0.6b-v3-gguf",
+    // Parakeet TDT v3 ignores the language setting and sometimes writes
+    // Spanish speech in English, so the "precise" slot is Canary 1B v2.
+    "handy-computer/canary-1b-v2-gguf",
 ];
 
 /// Whether a model belongs to the curated set shown to users.

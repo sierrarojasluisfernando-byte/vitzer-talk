@@ -1,17 +1,24 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Cog, FlaskConical, History, Info, Sparkles, Cpu } from "lucide-react";
+import {
+  BookOpen,
+  Cog,
+  FlaskConical,
+  Home,
+  Info,
+  LifeBuoy,
+  Sparkles,
+} from "lucide-react";
 import HandyTextLogo from "./icons/HandyTextLogo";
-import HandyHand from "./icons/HandyHand";
 import { useSettings } from "../hooks/useSettings";
 import {
-  GeneralSettings,
-  AdvancedSettings,
+  ConfigurationSettings,
+  DictionarySettings,
+  HelpSettings,
   HistorySettings,
   DebugSettings,
   AboutSettings,
   PostProcessingSettings,
-  ModelsSettings,
 } from "./settings";
 
 export type SidebarSection = keyof typeof SECTIONS_CONFIG;
@@ -26,52 +33,71 @@ interface IconProps {
 
 interface SectionConfig {
   labelKey: string;
+  /** Page title and one-line explanation shown above the section. */
+  titleKey: string;
+  descriptionKey: string;
   icon: React.ComponentType<IconProps>;
   component: React.ComponentType;
   enabled: (settings: any) => boolean;
 }
 
+// Vitzer Talk navigation: recent dictations first, then the vocabulary, then
+// every setting on one page.
 export const SECTIONS_CONFIG = {
-  general: {
-    labelKey: "sidebar.general",
-    icon: HandyHand,
-    component: GeneralSettings,
-    enabled: () => true,
-  },
-  history: {
-    labelKey: "sidebar.history",
-    icon: History,
+  home: {
+    labelKey: "sidebar.home",
+    titleKey: "pages.home.title",
+    descriptionKey: "pages.home.description",
+    icon: Home,
     component: HistorySettings,
     enabled: () => true,
   },
-  models: {
-    labelKey: "sidebar.models",
-    icon: Cpu,
-    component: ModelsSettings,
+  dictionary: {
+    labelKey: "sidebar.dictionary",
+    titleKey: "pages.dictionary.title",
+    descriptionKey: "pages.dictionary.description",
+    icon: BookOpen,
+    component: DictionarySettings,
     enabled: () => true,
   },
-  advanced: {
-    labelKey: "sidebar.advanced",
+  general: {
+    labelKey: "sidebar.general",
+    titleKey: "pages.general.title",
+    descriptionKey: "pages.general.description",
     icon: Cog,
-    component: AdvancedSettings,
+    component: ConfigurationSettings,
     enabled: () => true,
   },
   postprocessing: {
     labelKey: "sidebar.postProcessing",
+    titleKey: "pages.postProcessing.title",
+    descriptionKey: "pages.postProcessing.description",
     icon: Sparkles,
     component: PostProcessingSettings,
     enabled: (settings) => settings?.post_process_enabled ?? false,
   },
   debug: {
     labelKey: "sidebar.debug",
+    titleKey: "pages.debug.title",
+    descriptionKey: "pages.debug.description",
     icon: FlaskConical,
     component: DebugSettings,
     enabled: (settings) => settings?.debug_mode ?? false,
   },
   about: {
     labelKey: "sidebar.about",
+    titleKey: "pages.about.title",
+    descriptionKey: "pages.about.description",
     icon: Info,
     component: AboutSettings,
+    enabled: () => true,
+  },
+  help: {
+    labelKey: "sidebar.help",
+    titleKey: "pages.help.title",
+    descriptionKey: "pages.help.description",
+    icon: LifeBuoy,
+    component: HelpSettings,
     enabled: () => true,
   },
 } as const satisfies Record<string, SectionConfig>;
