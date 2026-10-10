@@ -4,7 +4,6 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { SettingsGroup } from "../../ui/SettingsGroup";
 import { SettingContainer } from "../../ui/SettingContainer";
 import { Button } from "../../ui/Button";
-import { LogDirectory } from "../debug/LogDirectory";
 
 // Vitzer's contact page. Update when the site moves to its own domain.
 const CONTACT_URL = "https://vitzer-portafolio.vercel.app/contacto.html";
@@ -29,13 +28,6 @@ export const HelpSettings: React.FC = () => {
             {t("settings.help.contact.button")}
           </Button>
         </SettingContainer>
-      </SettingsGroup>
-
-      <SettingsGroup
-        title={t("settings.help.logs.group")}
-        description={t("settings.help.logs.description")}
-      >
-        <LogDirectory descriptionMode="tooltip" grouped={true} />
       </SettingsGroup>
     </div>
   );

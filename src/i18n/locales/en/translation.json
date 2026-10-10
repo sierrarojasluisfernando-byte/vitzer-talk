@@ -681,10 +681,6 @@
         "title": "Need help or have a suggestion?",
         "description": "Write to us from the Vitzer contact page.",
         "button": "Go to contact"
-      },
-      "logs": {
-        "group": "Logs",
-        "description": "If you report a problem, these files help us find the cause. They are never sent automatically."
       }
     }
   },
