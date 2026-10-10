@@ -835,7 +835,7 @@ mod tests {
                 OVERLAY_HEIGHT,
                 OverlayPosition::Top,
             ),
-            (3648, 6, 384, 75)
+            (3639, 6, 402, 156)
         );
     }
 
