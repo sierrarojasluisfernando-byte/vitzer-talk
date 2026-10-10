@@ -65,7 +65,7 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
         >
           <span>
             <span
-              className={`block font-display text-[15px] font-bold ${open ? "text-logo-primary" : ""}`}
+              className={`block font-display text-sm font-medium ${open ? "text-logo-primary" : ""}`}
             >
               {title}
             </span>
