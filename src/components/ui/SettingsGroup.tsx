@@ -61,10 +61,14 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
           type="button"
           onClick={toggle}
           aria-expanded={open}
-          className="w-full flex items-center justify-between gap-3 px-4 py-3 text-start cursor-pointer rounded-xl hover:bg-mid-gray/10 transition-colors"
+          className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-start cursor-pointer transition-colors ${open ? "rounded-t-xl bg-logo-primary/10" : "rounded-xl hover:bg-mid-gray/10"}`}
         >
           <span>
-            <span className="block text-sm font-semibold">{title}</span>
+            <span
+              className={`block font-display text-[15px] font-bold ${open ? "text-logo-primary" : ""}`}
+            >
+              {title}
+            </span>
             {description && (
               <span className="block text-xs text-mid-gray mt-0.5">
                 {description}
@@ -75,8 +79,10 @@ export const SettingsGroup: React.FC<SettingsGroupProps> = ({
             className={`w-4 h-4 shrink-0 text-mid-gray transition-transform duration-200 ${open ? "rotate-180" : ""}`}
           />
         </button>
+        {/* Option names sit a step below the group title: body font, smaller
+            and softer. */}
         {open && (
-          <div className="border-t border-mid-gray/20 divide-y divide-mid-gray/20">
+          <div className="border-t border-mid-gray/20 divide-y divide-mid-gray/20 [&_h3]:font-sans [&_h3]:text-[13px] [&_h3]:font-normal [&_h3]:tracking-normal [&_h3]:text-text/75">
             {children}
           </div>
         )}
