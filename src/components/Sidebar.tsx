@@ -15,7 +15,7 @@ import {
   ConfigurationSettings,
   DictionarySettings,
   HelpSettings,
-  HistorySettings,
+  HomeSettings,
   DebugSettings,
   AboutSettings,
   PostProcessingSettings,
@@ -49,7 +49,7 @@ export const SECTIONS_CONFIG = {
     titleKey: "pages.home.title",
     descriptionKey: "pages.home.description",
     icon: Home,
-    component: HistorySettings,
+    component: HomeSettings,
     enabled: () => true,
   },
   dictionary: {

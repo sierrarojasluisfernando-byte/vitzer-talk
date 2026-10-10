@@ -682,6 +682,9 @@
         "description": "Escríbenos desde la página de contacto de Vitzer.",
         "button": "Ir a contacto"
       }
+    },
+    "home": {
+      "app": "Aplicación"
     }
   },
   "footer": {
@@ -785,7 +788,7 @@
     },
     "about": {
       "title": "Acerca de Vitzer Talk",
-      "description": "Versión, datos de la aplicación y reconocimientos."
+      "description": "Qué es Vitzer Talk y quién la desarrolla."
     },
     "help": {
       "title": "Ayuda y soporte",
