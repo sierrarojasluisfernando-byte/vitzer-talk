@@ -12,6 +12,7 @@ import type {
 import i18n, { syncLanguageFromSettings } from "@/i18n";
 import type { ModelStateEvent } from "@/lib/types/events";
 import { getLanguageDirection } from "@/lib/utils/rtl";
+import { X } from "lucide-react";
 
 type OverlayState = "recording" | "streaming" | "transcribing" | "processing";
 
@@ -285,14 +286,7 @@ const RecordingOverlay: React.FC = () => {
       aria-label="cancel"
       onClick={() => commands.cancelOperation()}
     >
-      <svg viewBox="0 0 16 16" aria-hidden="true">
-        <path
-          d="M4 4 L12 12 M12 4 L4 12"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-      </svg>
+      <X aria-hidden="true" strokeWidth={3} />
     </button>
   );
 
@@ -315,9 +309,7 @@ const RecordingOverlay: React.FC = () => {
   // listening row, so the label is centered.
   const workingRow = (label: string, showCancel: boolean) => (
     <div className="sbase">
-      <div className="sbase-l">
-        {brandMark("working")}
-      </div>
+      <div className="sbase-l">{brandMark("working")}</div>
       <span className="swork-label">{label}</span>
       <div className="sbase-r">{showCancel && cancelBtn}</div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Tooltip } from "./Tooltip";
+import { Info } from "lucide-react";
 
 interface SettingContainerProps {
   title: string;
@@ -68,11 +69,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
               onMouseLeave={() => setShowTooltip(false)}
               onClick={toggleTooltip}
             >
-              <svg
+              <Info
                 className="w-4 h-4 text-mid-gray cursor-help hover:text-logo-primary transition-colors duration-200 select-none"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
                 aria-label="More information"
                 role="button"
                 tabIndex={0}
@@ -82,14 +80,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
                     toggleTooltip();
                   }
                 }}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              />
               {showTooltip && (
                 <Tooltip targetRef={tooltipRef} position="top">
                   <p className="text-sm text-center leading-relaxed">
@@ -141,11 +132,8 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
               onMouseLeave={() => setShowTooltip(false)}
               onClick={toggleTooltip}
             >
-              <svg
+              <Info
                 className="w-4 h-4 text-mid-gray cursor-help hover:text-logo-primary transition-colors duration-200 select-none"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
                 aria-label="More information"
                 role="button"
                 tabIndex={0}
@@ -155,14 +143,7 @@ export const SettingContainer: React.FC<SettingContainerProps> = ({
                     toggleTooltip();
                   }
                 }}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              />
               {showTooltip && (
                 <Tooltip targetRef={tooltipRef} position={tooltipPosition}>
                   <p className="text-sm text-center leading-relaxed">

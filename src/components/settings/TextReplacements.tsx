@@ -5,6 +5,7 @@ import { useSettings } from "../../hooks/useSettings";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { SettingContainer } from "../ui/SettingContainer";
+import { X } from "lucide-react";
 
 interface TextReplacementsProps {
   descriptionMode?: "inline" | "tooltip";
@@ -89,7 +90,7 @@ export const TextReplacements: React.FC<TextReplacementsProps> = React.memo(
               variant="compact"
               disabled={updating}
             />
-            { }
+            {}
             <span className="text-mid-gray">→</span>
             <Input
               type="text"
@@ -130,22 +131,10 @@ export const TextReplacements: React.FC<TextReplacementsProps> = React.memo(
                 })}
               >
                 <span>{r.from}</span>
-                { }
+                {}
                 <span className="text-mid-gray">→</span>
                 <span>{r.to}</span>
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X className="w-3 h-3" />
               </Button>
             ))}
           </div>
