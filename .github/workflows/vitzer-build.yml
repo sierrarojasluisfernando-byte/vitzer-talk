@@ -30,3 +30,37 @@ jobs:
       sign-binaries: false
       asset-prefix: "vitzer-talk"
       upload-artifacts: true
+
+  # Publishes the three installers as a public GitHub Release with stable file
+  # names, so the Vitzer site can link to releases/latest/download/<name>.
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Collect installers
+        run: |
+          set -euo pipefail
+          mkdir out
+          cp "$(find artifacts/vitzer-talk-x86_64-pc-windows-msvc -name '*-setup.exe' | head -1)" out/VitzerTalk-Windows-x64-setup.exe
+          cp "$(find artifacts/vitzer-talk-aarch64-apple-darwin -name '*.dmg' | head -1)" out/VitzerTalk-macOS-AppleSilicon.dmg
+          cp "$(find artifacts/vitzer-talk-x86_64-apple-darwin -name '*.dmg' | head -1)" out/VitzerTalk-macOS-Intel.dmg
+          ls -la out
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="vitzer-$(date -u +%Y%m%d)-${{ github.run_number }}"
+          gh release create "$tag" out/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Vitzer Talk ($(date -u +%Y-%m-%d))" \
+            --notes "Instaladores de Vitzer Talk para Windows y macOS. No están firmados: Windows y macOS mostrarán un aviso de seguridad al abrirlos." \
+            --latest
