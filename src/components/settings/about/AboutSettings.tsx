@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getVersion } from "@tauri-apps/api/app";
-import { openUrl } from "@tauri-apps/plugin-opener";
 import { SettingsGroup } from "../../ui/SettingsGroup";
 import { SettingContainer } from "../../ui/SettingContainer";
-import { Button } from "../../ui/Button";
 import { AppDataDirectory } from "../AppDataDirectory";
 import { AppLanguageSelector } from "../AppLanguageSelector";
 import { ShowWhatsNewOnUpdate } from "../ShowWhatsNewOnUpdate";
@@ -45,20 +43,6 @@ export const AboutSettings: React.FC = () => {
 
         <ShowWhatsNewOnUpdate descriptionMode="tooltip" grouped={true} />
 
-        <SettingContainer
-          title={t("settings.about.sourceCode.title")}
-          description={t("settings.about.sourceCode.description")}
-          grouped={true}
-        >
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={() => openUrl("https://github.com/cjpais/Handy")}
-          >
-            {t("settings.about.sourceCode.button")}
-          </Button>
-        </SettingContainer>
-
         <AppDataDirectory descriptionMode="tooltip" grouped={true} />
         <LogDirectory grouped={true} />
       </SettingsGroup>
@@ -75,6 +59,11 @@ export const AboutSettings: React.FC = () => {
           </div>
         </SettingContainer>
       </SettingsGroup>
+
+      {/* Attribution required by the upstream MIT license; plain small print. */}
+      <p className="px-4 text-xs text-mid-gray">
+        {t("settings.about.sourceCode.description")}
+      </p>
     </div>
   );
 };
