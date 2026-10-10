@@ -657,6 +657,11 @@
           "description": "High-performance tensor library for on-device machine learning inference",
           "details": "Vitzer Talk's local speech-to-text is built on transcribe.cpp and ggml. Thanks to the amazing work by Georgi Gerganov and contributors."
         }
+      },
+      "intro": {
+        "what": "Vitzer Talk is a voice dictation tool. Press your shortcut, speak, and the text appears wherever your cursor is.",
+        "privacy": "Transcription happens on your computer: your voice never leaves it, and you need no account or internet. AI correction is optional and uses your own key.",
+        "madeBy": "Built by Vitzer ·"
       }
     },
     "dictionary": {

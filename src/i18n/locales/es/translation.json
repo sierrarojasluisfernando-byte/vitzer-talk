@@ -657,6 +657,11 @@
       "whatsNewUpdates": {
         "label": "Mostrar novedades",
         "description": "Mostrar notas de la versión después de las actualizaciones de Vitzer Talk"
+      },
+      "intro": {
+        "what": "Vitzer Talk es una herramienta de dictado por voz. Pulsa tu atajo, habla, y el texto aparece donde tengas el cursor.",
+        "privacy": "La transcripción ocurre en tu computador: tu voz no sale del equipo y no necesitas cuenta ni internet. La corrección con IA es opcional y usa tu propia clave.",
+        "madeBy": "Desarrollada por Vitzer ·"
       }
     },
     "dictionary": {
