@@ -10,7 +10,6 @@ export { ModelsSettings } from "./models/ModelsSettings";
 export { ConfigurationSettings } from "./configuration/ConfigurationSettings";
 export { DictionarySettings } from "./dictionary/DictionarySettings";
 export { HelpSettings } from "./help/HelpSettings";
-export { HomeSettings } from "./home/HomeSettings";
 
 // Individual setting components
 export { MicrophoneSelector } from "./MicrophoneSelector";

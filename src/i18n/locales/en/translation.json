@@ -159,7 +159,7 @@
   },
   "settings": {
     "modelSettings": {
-      "title": "{{model}} Settings"
+      "title": "Dictation language"
     },
     "general": {
       "title": "General",
@@ -684,7 +684,7 @@
       }
     },
     "home": {
-      "app": "App"
+      "app": "Language and appearance"
     }
   },
   "footer": {

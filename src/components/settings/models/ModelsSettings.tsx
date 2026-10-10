@@ -34,7 +34,14 @@ const isLegacyModel = (model: ModelInfo): boolean =>
 // filter controls stay hidden. Flip this if the full catalog comes back.
 const SHOW_CATALOG_FILTERS = false;
 
-export const ModelsSettings: React.FC = () => {
+interface ModelsSettingsProps {
+  /** Rendered inside another section that already shows the title. */
+  embedded?: boolean;
+}
+
+export const ModelsSettings: React.FC<ModelsSettingsProps> = ({
+  embedded = false,
+}) => {
   const { t } = useTranslation();
   const [switchingModelId, setSwitchingModelId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -243,7 +250,7 @@ export const ModelsSettings: React.FC = () => {
 
   return (
     <div className="max-w-3xl w-full mx-auto space-y-4">
-      <div className="mb-4">
+      <div className={embedded ? "hidden" : "mb-4"}>
         <h1 className="text-xl font-semibold mb-2">
           {t("settings.models.title")}
         </h1>

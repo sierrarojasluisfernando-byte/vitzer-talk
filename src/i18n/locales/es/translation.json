@@ -159,7 +159,7 @@
   },
   "settings": {
     "modelSettings": {
-      "title": "Configuración de {{model}}"
+      "title": "Idioma del dictado"
     },
     "models": {
       "title": "Modelos de transcripción",
@@ -684,7 +684,7 @@
       }
     },
     "home": {
-      "app": "Aplicación"
+      "app": "Idioma y apariencia"
     }
   },
   "footer": {
