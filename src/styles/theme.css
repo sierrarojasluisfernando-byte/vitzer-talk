@@ -1,17 +1,23 @@
-/* Vitzer Talk colors: royal blue primary, violet secondary (from the Vitzer site) */
+/* Vitzer Talk look: fonts, palette and surfaces taken from the Vitzer site.
+   The fonts are bundled (no network): Manrope for headings and the wordmark,
+   Plus Jakarta Sans for everything else. */
+@import "@fontsource-variable/manrope/wght.css";
+@import "@fontsource-variable/plus-jakarta-sans/wght.css";
 
 :root {
   /* Palette source of truth. Each themed color is defined once as a
      light/dark pair; the active tokens below and the `data-theme` overrides
      in App.css reference these, so a hex value lives in exactly one place. */
-  --light-color-text: #0f0f0f;
-  --light-color-background: #fbfbfb;
+  --light-color-text: #0b0b12;
+  --light-color-background: #ffffff;
+  --light-color-surface: #f7f7fa;
   --light-color-logo-primary: #4169e1;
   --light-color-logo-stroke: #2f4fbf;
 
-  --dark-color-text: #fbfbfb;
-  --dark-color-background: #2c2b29;
-  --dark-color-logo-primary: #7b97f0;
+  --dark-color-text: #f2f3f8;
+  --dark-color-background: #0f1020;
+  --dark-color-surface: #1a1b2e;
+  --dark-color-logo-primary: #7b9bff;
   --dark-color-logo-stroke: #c4b5fd;
 
   /* Semantic status colors. First used by SecureInputWarning; intended to
@@ -26,12 +32,15 @@
   --color-background-ui: #4169e1;
   --color-accent-secondary: #8b5cf6;
   --color-text-stroke: #f6f6f6;
-  --color-mid-gray: #808080;
+  --color-mid-gray: #7a7f94;
+  --font-body: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+  --font-display: "Manrope Variable", system-ui, sans-serif;
 
   /* Active palette — defaults to light, follows the OS via the media query
      below, or is forced by `data-theme` (see the overrides below). */
   --color-text: var(--light-color-text);
   --color-background: var(--light-color-background);
+  --color-surface: var(--light-color-surface);
   --color-logo-primary: var(--light-color-logo-primary);
   --color-logo-stroke: var(--light-color-logo-stroke);
   --color-warning: var(--light-color-warning);
@@ -42,6 +51,7 @@
   :root {
     --color-text: var(--dark-color-text);
     --color-background: var(--dark-color-background);
+    --color-surface: var(--dark-color-surface);
     --color-logo-primary: var(--dark-color-logo-primary);
     --color-logo-stroke: var(--dark-color-logo-stroke);
     --color-warning: var(--dark-color-warning);
@@ -62,6 +72,7 @@
 :root[data-theme="light"] {
   --color-text: var(--light-color-text);
   --color-background: var(--light-color-background);
+  --color-surface: var(--light-color-surface);
   --color-logo-primary: var(--light-color-logo-primary);
   --color-logo-stroke: var(--light-color-logo-stroke);
   --color-warning: var(--light-color-warning);
@@ -71,6 +82,7 @@
 :root[data-theme="dark"] {
   --color-text: var(--dark-color-text);
   --color-background: var(--dark-color-background);
+  --color-surface: var(--dark-color-surface);
   --color-logo-primary: var(--dark-color-logo-primary);
   --color-logo-stroke: var(--dark-color-logo-stroke);
   --color-warning: var(--dark-color-warning);

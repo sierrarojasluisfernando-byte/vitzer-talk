@@ -34,8 +34,9 @@ const HandyTextLogo = ({
         y="170"
         textAnchor="middle"
         dominantBaseline="middle"
+        fontFamily="var(--font-display)"
         fontSize="150"
-        fontWeight="700"
+        fontWeight="800"
         letterSpacing="-4"
         fill="url(#vitzer-talk-wordmark)"
       >
